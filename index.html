@@ -154,6 +154,14 @@
             background-color: #2f855a;
         }
 
+        .btn-danger {
+            background-color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background-color: #c53030;
+        }
+
         .upload-area {
             border: 2px dashed #cbd5e0;
             border-radius: var(--border-radius);
@@ -181,7 +189,7 @@
             color: var(--secondary);
         }
 
-        #file-input {
+        .file-input {
             display: none;
         }
 
@@ -310,6 +318,56 @@
             display: block;
         }
 
+        .assessment-status {
+            background-color: var(--light);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #718096;
+        }
+
+        .status-dot.ready {
+            background-color: var(--success);
+        }
+
+        .status-dot.processing {
+            background-color: var(--accent);
+        }
+
+        .status-dot.error {
+            background-color: var(--danger);
+        }
+
+        .analysis-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .analysis-card {
+            background-color: var(--light);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+        }
+
+        .analysis-card h3 {
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
         footer {
             background-color: var(--secondary);
             color: white;
@@ -343,6 +401,10 @@
             .upload-options {
                 flex-direction: column;
             }
+            
+            .analysis-section {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -355,9 +417,9 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="#" class="active">Upload</a></li>
-                    <li><a href="#">Rubrics</a></li>
+                    <li><a href="#" class="active">Upload & Process</a></li>
                     <li><a href="#">Results</a></li>
+                    <li><a href="#">Settings</a></li>
                 </ul>
             </nav>
         </div>
@@ -366,60 +428,121 @@
     <div class="container">
         <div class="card">
             <div class="card-header">
-                <h2>Upload Assignment Submissions</h2>
+                <h2>Assessment Setup</h2>
             </div>
             
-            <div class="upload-area" id="upload-area">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <h3>Drag & Drop Files Here</h3>
-                <p>Supported formats: DOCX, PDF, TXT</p>
-                <p>Maximum file size: 10MB per file</p>
-                <div class="upload-options">
-                    <button class="btn" id="browse-files-btn">Browse Files</button>
+            <div class="assessment-status">
+                <div class="status-indicator">
+                    <div class="status-dot" id="rubric-status"></div>
+                    <span id="rubric-status-text">No rubric uploaded</span>
                 </div>
-                <input type="file" id="file-input" multiple accept=".pdf,.docx,.doc,.txt">
+                <div class="status-indicator">
+                    <div class="status-dot" id="assignments-status"></div>
+                    <span id="assignments-status-text">No assignments uploaded</span>
+                </div>
+                <div class="status-indicator">
+                    <div class="status-dot" id="analysis-status"></div>
+                    <span id="analysis-status-text">Ready for analysis</span>
+                </div>
             </div>
             
-            <div class="file-list" id="file-list">
-                <!-- Files will be added here dynamically -->
+            <div class="analysis-section">
+                <div class="analysis-card">
+                    <h3>Upload Rubric</h3>
+                    <p>Upload your assessment rubric in PDF, DOCX, or JSON format.</p>
+                    
+                    <div class="upload-area" id="rubric-upload-area">
+                        <i class="fas fa-file-alt"></i>
+                        <h3>Drag & Drop Rubric Here</h3>
+                        <p>Supported formats: PDF, DOCX, JSON</p>
+                        <div class="upload-options">
+                            <button class="btn" id="browse-rubric-btn">Browse Files</button>
+                        </div>
+                        <input type="file" id="rubric-file-input" class="file-input" accept=".pdf,.docx,.json">
+                    </div>
+                    
+                    <div class="file-list" id="rubric-file-list">
+                        <!-- Rubric files will be added here dynamically -->
+                    </div>
+                </div>
+                
+                <div class="analysis-card">
+                    <h3>Upload Assignments</h3>
+                    <p>Upload student assignments in PDF, DOCX, or TXT format.</p>
+                    
+                    <div class="upload-area" id="assignments-upload-area">
+                        <i class="fas fa-file-upload"></i>
+                        <h3>Drag & Drop Assignments Here</h3>
+                        <p>Supported formats: PDF, DOCX, TXT</p>
+                        <div class="upload-options">
+                            <button class="btn" id="browse-assignments-btn">Browse Files</button>
+                        </div>
+                        <input type="file" id="assignments-file-input" class="file-input" multiple accept=".pdf,.docx,.txt">
+                    </div>
+                    
+                    <div class="file-list" id="assignments-file-list">
+                        <!-- Assignment files will be added here dynamically -->
+                    </div>
+                </div>
             </div>
             
-            <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end;">
-                <button class="btn btn-success" id="process-files-btn" disabled>
-                    <i class="fas fa-cogs"></i> Process Uploaded Files
+            <div style="margin-top: 1.5rem; display: flex; justify-content: center;">
+                <button class="btn btn-success" id="start-analysis-btn" disabled>
+                    <i class="fas fa-cogs"></i> Start Analysis
                 </button>
             </div>
         </div>
 
         <div class="tabs">
-            <div class="tab active" data-tab="rubric">Rubric Management</div>
-            <div class="tab" data-tab="results">Assessment Results</div>
+            <div class="tab active" data-tab="results">Assessment Results</div>
+            <div class="tab" data-tab="settings">API Settings</div>
         </div>
 
-        <div class="tab-content active" id="rubric">
+        <div class="tab-content active" id="results">
             <div class="card">
                 <div class="card-header">
-                    <h2>Current Rubric</h2>
+                    <h2>Assessment Results</h2>
                 </div>
-                <p>No rubric uploaded yet.</p>
+                <p id="results-placeholder">No assessments completed yet. Upload a rubric and assignments to begin.</p>
+                <div id="results-content" style="display: none;">
+                    <!-- Results will be displayed here -->
+                </div>
                 <div style="margin-top: 1.5rem;">
-                    <button class="btn" id="upload-rubric-btn">
-                        <i class="fas fa-file-upload"></i> Upload New Rubric
+                    <button class="btn" id="export-results-btn" disabled>
+                        <i class="fas fa-download"></i> Export Results
                     </button>
                 </div>
             </div>
         </div>
 
-        <div class="tab-content" id="results">
+        <div class="tab-content" id="settings">
             <div class="card">
                 <div class="card-header">
-                    <h2>Assessment Results</h2>
+                    <h2>API Configuration</h2>
                 </div>
-                <p>No assessments completed yet.</p>
+                <p>Configure the connection to the assessment API.</p>
+                
                 <div style="margin-top: 1.5rem;">
-                    <button class="btn" id="export-results-btn" disabled>
-                        <i class="fas fa-download"></i> Export Results
-                    </button>
+                    <div style="margin-bottom: 1rem;">
+                        <label for="api-endpoint">API Endpoint:</label>
+                        <input type="text" id="api-endpoint" style="width: 100%; padding: 0.5rem; margin-top: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;" 
+                               value="https://api.academic-assessor.com/v1/analyze" placeholder="API endpoint URL">
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <label for="api-key">API Key:</label>
+                        <input type="password" id="api-key" style="width: 100%; padding: 0.5rem; margin-top: 0.5rem; border: 1px solid #cbd5e0; border-radius: 4px;" 
+                               placeholder="Enter your API key">
+                    </div>
+                    
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn" id="test-api-btn">
+                            <i class="fas fa-plug"></i> Test Connection
+                        </button>
+                        <button class="btn btn-success" id="save-settings-btn">
+                            <i class="fas fa-save"></i> Save Settings
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -436,48 +559,115 @@
 
     <script>
         // File upload functionality
-        const fileInput = document.getElementById('file-input');
-        const browseFilesBtn = document.getElementById('browse-files-btn');
-        const uploadArea = document.getElementById('upload-area');
-        const fileList = document.getElementById('file-list');
-        const processFilesBtn = document.getElementById('process-files-btn');
+        const rubricFileInput = document.getElementById('rubric-file-input');
+        const assignmentsFileInput = document.getElementById('assignments-file-input');
+        const browseRubricBtn = document.getElementById('browse-rubric-btn');
+        const browseAssignmentsBtn = document.getElementById('browse-assignments-btn');
+        const rubricUploadArea = document.getElementById('rubric-upload-area');
+        const assignmentsUploadArea = document.getElementById('assignments-upload-area');
+        const rubricFileList = document.getElementById('rubric-file-list');
+        const assignmentsFileList = document.getElementById('assignments-file-list');
+        const startAnalysisBtn = document.getElementById('start-analysis-btn');
         
-        let uploadedFiles = [];
+        // Status indicators
+        const rubricStatus = document.getElementById('rubric-status');
+        const rubricStatusText = document.getElementById('rubric-status-text');
+        const assignmentsStatus = document.getElementById('assignments-status');
+        const assignmentsStatusText = document.getElementById('assignments-status-text');
+        const analysisStatus = document.getElementById('analysis-status');
+        const analysisStatusText = document.getElementById('analysis-status-text');
+        
+        let uploadedRubric = null;
+        let uploadedAssignments = [];
 
-        // Trigger file input when browse button is clicked
-        browseFilesBtn.addEventListener('click', () => {
-            fileInput.click();
+        // Trigger file inputs when browse buttons are clicked
+        browseRubricBtn.addEventListener('click', () => {
+            rubricFileInput.click();
         });
 
-        // Handle file selection
-        fileInput.addEventListener('change', (e) => {
-            handleFiles(e.target.files);
+        browseAssignmentsBtn.addEventListener('click', () => {
+            assignmentsFileInput.click();
         });
 
-        // Drag and drop functionality
-        uploadArea.addEventListener('dragover', (e) => {
+        // Handle rubric file selection
+        rubricFileInput.addEventListener('change', (e) => {
+            handleRubricFile(e.target.files[0]);
+        });
+
+        // Handle assignment files selection
+        assignmentsFileInput.addEventListener('change', (e) => {
+            handleAssignmentFiles(e.target.files);
+        });
+
+        // Drag and drop functionality for rubric
+        rubricUploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
-            uploadArea.classList.add('dragover');
+            rubricUploadArea.classList.add('dragover');
         });
 
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('dragover');
+        rubricUploadArea.addEventListener('dragleave', () => {
+            rubricUploadArea.classList.remove('dragover');
         });
 
-        uploadArea.addEventListener('drop', (e) => {
+        rubricUploadArea.addEventListener('drop', (e) => {
             e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            handleFiles(e.dataTransfer.files);
+            rubricUploadArea.classList.remove('dragover');
+            handleRubricFile(e.dataTransfer.files[0]);
         });
 
-        // Process the selected files
-        function handleFiles(files) {
+        // Drag and drop functionality for assignments
+        assignmentsUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            assignmentsUploadArea.classList.add('dragover');
+        });
+
+        assignmentsUploadArea.addEventListener('dragleave', () => {
+            assignmentsUploadArea.classList.remove('dragover');
+        });
+
+        assignmentsUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            assignmentsUploadArea.classList.remove('dragover');
+            handleAssignmentFiles(e.dataTransfer.files);
+        });
+
+        // Process the selected rubric file
+        function handleRubricFile(file) {
+            if (!file) return;
+            
+            // Validate file type
+            const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/json'];
+            if (!validTypes.includes(file.type)) {
+                alert(`File "${file.name}" is not a supported rubric format. Please upload PDF, DOCX, or JSON files.`);
+                return;
+            }
+            
+            // Validate file size (10MB max)
+            if (file.size > 10 * 1024 * 1024) {
+                alert(`File "${file.name}" is too large. Maximum file size is 10MB.`);
+                return;
+            }
+            
+            // Set as uploaded rubric
+            uploadedRubric = file;
+            addRubricToList(file);
+            updateAnalysisButtonState();
+            
+            // Update status
+            rubricStatus.className = 'status-dot ready';
+            rubricStatusText.textContent = 'Rubric uploaded and ready';
+            
+            // Clear file input
+            rubricFileInput.value = '';
+        }
+
+        // Process the selected assignment files
+        function handleAssignmentFiles(files) {
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 
                 // Validate file type
-                const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
-                                   'application/msword', 'text/plain'];
+                const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'];
                 if (!validTypes.includes(file.type)) {
                     alert(`File "${file.name}" is not a supported format. Please upload PDF, DOCX, or TXT files.`);
                     continue;
@@ -489,25 +679,31 @@
                     continue;
                 }
                 
-                // Add to uploaded files list
-                if (!uploadedFiles.some(f => f.name === file.name && f.size === file.size)) {
-                    uploadedFiles.push(file);
-                    addFileToList(file);
+                // Add to uploaded assignments list
+                if (!uploadedAssignments.some(f => f.name === file.name && f.size === file.size)) {
+                    uploadedAssignments.push(file);
+                    addAssignmentToList(file);
                 }
             }
             
-            // Enable process button if we have files
-            processFilesBtn.disabled = uploadedFiles.length === 0;
+            updateAnalysisButtonState();
             
-            // Update file input to clear selection
-            fileInput.value = '';
+            // Update status
+            if (uploadedAssignments.length > 0) {
+                assignmentsStatus.className = 'status-dot ready';
+                assignmentsStatusText.textContent = `${uploadedAssignments.length} assignment(s) uploaded`;
+            }
+            
+            // Clear file input
+            assignmentsFileInput.value = '';
         }
 
-        // Add file to the UI list
-        function addFileToList(file) {
+        // Add rubric to the UI list
+        function addRubricToList(file) {
+            rubricFileList.innerHTML = '';
+            
             const fileItem = document.createElement('div');
             fileItem.className = 'file-item';
-            fileItem.dataset.fileId = Date.now() + Math.random();
             
             const fileSize = formatFileSize(file.size);
             const fileType = getFileType(file);
@@ -522,78 +718,164 @@
                             <span>${fileType}</span>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress" style="width: 0%"></div>
+                            <div class="progress" style="width: 100%"></div>
                         </div>
                         <div class="upload-status">
-                            <span>Status: <span class="status-text">Pending</span></span>
-                            <span class="progress-text">0%</span>
+                            <span>Status: <span class="status-text" style="color: var(--success);">Ready for analysis</span></span>
                         </div>
                     </div>
                 </div>
                 <div class="file-actions">
-                    <button class="action-btn remove-btn" title="Remove file"><i class="fas fa-trash"></i></button>
+                    <button class="action-btn remove-btn" title="Remove rubric"><i class="fas fa-trash"></i></button>
                 </div>
             `;
             
-            fileList.appendChild(fileItem);
+            rubricFileList.appendChild(fileItem);
             
-            // Simulate upload progress
-            simulateUploadProgress(fileItem);
-            
-            // Add event listeners for buttons
+            // Add event listener for remove button
             const removeBtn = fileItem.querySelector('.remove-btn');
             removeBtn.addEventListener('click', () => {
-                const fileName = file.name;
-                uploadedFiles = uploadedFiles.filter(f => f !== file);
-                fileItem.remove();
-                processFilesBtn.disabled = uploadedFiles.length === 0;
-                showNotification(`File "${fileName}" removed`);
+                uploadedRubric = null;
+                rubricFileList.innerHTML = '';
+                updateAnalysisButtonState();
+                
+                // Update status
+                rubricStatus.className = 'status-dot';
+                rubricStatusText.textContent = 'No rubric uploaded';
+                
+                showNotification('Rubric removed');
             });
         }
 
-        // Simulate upload progress
-        function simulateUploadProgress(fileItem) {
-            const progressBar = fileItem.querySelector('.progress');
-            const progressText = fileItem.querySelector('.progress-text');
-            const statusText = fileItem.querySelector('.status-text');
+        // Add assignment to the UI list
+        function addAssignmentToList(file) {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
             
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += Math.random() * 10;
-                if (progress >= 100) {
-                    progress = 100;
-                    clearInterval(interval);
-                    statusText.textContent = 'Uploaded';
-                    statusText.style.color = 'var(--success)';
-                    showNotification(`File uploaded successfully`);
+            const fileSize = formatFileSize(file.size);
+            const fileType = getFileType(file);
+            
+            fileItem.innerHTML = `
+                <div class="file-info">
+                    <i class="fas ${getFileIcon(file)} file-icon"></i>
+                    <div class="file-details">
+                        <div class="file-name">${file.name}</div>
+                        <div class="file-meta">
+                            <span>${fileSize}</span>
+                            <span>${fileType}</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 100%"></div>
+                        </div>
+                        <div class="upload-status">
+                            <span>Status: <span class="status-text" style="color: var(--success);">Ready for analysis</span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="file-actions">
+                    <button class="action-btn remove-btn" title="Remove assignment"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
+            
+            assignmentsFileList.appendChild(fileItem);
+            
+            // Add event listener for remove button
+            const removeBtn = fileItem.querySelector('.remove-btn');
+            removeBtn.addEventListener('click', () => {
+                const fileName = file.name;
+                uploadedAssignments = uploadedAssignments.filter(f => f !== file);
+                fileItem.remove();
+                updateAnalysisButtonState();
+                
+                // Update status
+                if (uploadedAssignments.length === 0) {
+                    assignmentsStatus.className = 'status-dot';
+                    assignmentsStatusText.textContent = 'No assignments uploaded';
                 } else {
-                    statusText.textContent = 'Uploading...';
+                    assignmentsStatusText.textContent = `${uploadedAssignments.length} assignment(s) uploaded`;
                 }
                 
-                progressBar.style.width = `${progress}%`;
-                progressText.textContent = `${Math.round(progress)}%`;
-            }, 200);
+                showNotification(`Assignment "${fileName}" removed`);
+            });
         }
 
-        // Process files button
-        processFilesBtn.addEventListener('click', () => {
-            if (uploadedFiles.length === 0) return;
+        // Update the analysis button state based on uploaded files
+        function updateAnalysisButtonState() {
+            const hasRubric = uploadedRubric !== null;
+            const hasAssignments = uploadedAssignments.length > 0;
             
-            showNotification(`Processing ${uploadedFiles.length} file(s)...`);
+            startAnalysisBtn.disabled = !(hasRubric && hasAssignments);
             
-            // Simulate processing delay
+            if (hasRubric && hasAssignments) {
+                analysisStatus.className = 'status-dot ready';
+                analysisStatusText.textContent = 'Ready to analyze';
+            } else {
+                analysisStatus.className = 'status-dot';
+                analysisStatusText.textContent = 'Upload rubric and assignments to begin';
+            }
+        }
+
+        // Start analysis process
+        startAnalysisBtn.addEventListener('click', () => {
+            if (!uploadedRubric || uploadedAssignments.length === 0) return;
+            
+            showNotification('Starting analysis process...');
+            
+            // Update status
+            analysisStatus.className = 'status-dot processing';
+            analysisStatusText.textContent = 'Analysis in progress...';
+            startAnalysisBtn.disabled = true;
+            
+            // Simulate API call to analyze both rubric and assignments
+            simulateAPIAnalysis();
+        });
+
+        // Simulate API analysis process
+        function simulateAPIAnalysis() {
+            // This would be replaced with actual API calls
+            
+            // Step 1: Parse rubric
             setTimeout(() => {
-                // Clear uploaded files
-                uploadedFiles = [];
-                fileList.innerHTML = '';
-                processFilesBtn.disabled = true;
+                showNotification('Parsing rubric structure...');
+            }, 1000);
+            
+            // Step 2: Analyze assignments against rubric
+            setTimeout(() => {
+                showNotification(`Analyzing ${uploadedAssignments.length} assignment(s)...`);
+            }, 3000);
+            
+            // Step 3: Generate results
+            setTimeout(() => {
+                showNotification('Generating assessment results...');
                 
-                showNotification(`Successfully processed ${uploadedFiles.length} file(s)`);
+                // Update status
+                analysisStatus.className = 'status-dot ready';
+                analysisStatusText.textContent = 'Analysis complete';
                 
                 // Enable export button
                 document.getElementById('export-results-btn').disabled = false;
-            }, 2000);
-        });
+                
+                // Show results
+                document.getElementById('results-placeholder').style.display = 'none';
+                document.getElementById('results-content').style.display = 'block';
+                document.getElementById('results-content').innerHTML = `
+                    <h3>Analysis Complete</h3>
+                    <p>Successfully analyzed ${uploadedAssignments.length} assignment(s) using the uploaded rubric.</p>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn" id="view-details-btn">
+                            <i class="fas fa-chart-bar"></i> View Detailed Results
+                        </button>
+                    </div>
+                `;
+                
+                // Add event listener for view details button
+                document.getElementById('view-details-btn').addEventListener('click', () => {
+                    showNotification('Opening detailed results view...');
+                });
+                
+                showNotification('Analysis completed successfully!');
+            }, 6000);
+        }
 
         // Helper functions
         function formatFileSize(bytes) {
@@ -609,6 +891,7 @@
             if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') return 'Word Document';
             if (file.type === 'application/msword') return 'Word Document';
             if (file.type === 'text/plain') return 'Text File';
+            if (file.type === 'application/json') return 'JSON File';
             return 'Unknown';
         }
 
@@ -616,6 +899,7 @@
             if (file.type === 'application/pdf') return 'fa-file-pdf';
             if (file.type.includes('word')) return 'fa-file-word';
             if (file.type === 'text/plain') return 'fa-file-alt';
+            if (file.type === 'application/json') return 'fa-file-code';
             return 'fa-file';
         }
 
@@ -669,12 +953,16 @@
         });
 
         // Other button functionality
-        document.getElementById('upload-rubric-btn').addEventListener('click', () => {
-            showNotification('Rubric upload dialog would open here');
+        document.getElementById('export-results-btn').addEventListener('click', () => {
+            showNotification('Exporting assessment results...');
         });
 
-        document.getElementById('export-results-btn').addEventListener('click', () => {
-            showNotification('Exporting assessment results');
+        document.getElementById('test-api-btn').addEventListener('click', () => {
+            showNotification('Testing API connection...');
+        });
+
+        document.getElementById('save-settings-btn').addEventListener('click', () => {
+            showNotification('Settings saved successfully');
         });
     </script>
 </body>
