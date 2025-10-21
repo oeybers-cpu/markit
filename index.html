@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Literacy Assessor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a365d;
+            --secondary: #2d3748;
+            --accent: #3182ce;
+            --light: #f7fafc;
+            --dark: #2d3748;
+            --success: #38a169;
+            --warning: #d69e2e;
+            --danger: #e53e3e;
+            --border-radius: 8px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .logo span {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            font-weight: 400;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        nav a:hover {
+            opacity: 0.8;
+        }
+
+        nav a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .card-header h2 {
+            font-size: 1.4rem;
+            color: var(--primary);
+        }
+
+        .card-header i {
+            font-size: 1.5rem;
+            color: var(--accent);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            background-color: var(--light);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--secondary);
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--accent);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: #2c5aa0;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+        }
+
+        .btn-success:hover {
+            background-color: #2f855a;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background-color: #c53030;
+        }
+
+        .workflow {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .workflow-step {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .workflow-step::after {
+            content: '→';
+            position: absolute;
+            right: -1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: var(--accent);
+        }
+
+        .workflow-step:last-child::after {
+            display: none;
+        }
+
+        .step-icon {
+            width: 60px;
+            height: 60px;
+            background-color: var(--light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: var(--accent);
+            font-size: 1.5rem;
+        }
+
+        .upload-area {
+            border: 2px dashed #cbd5e0;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            background-color: var(--light);
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .upload-area.dragover {
+            border-color: var(--accent);
+            background-color: #ebf8ff;
+        }
+
+        .upload-area i {
+            font-size: 3rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .upload-area p {
+            margin-bottom: 1rem;
+            color: var(--secondary);
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .file-list {
+            margin-top: 1.5rem;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: white;
+            border-radius: var(--border-radius);
+            margin-bottom: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+        }
+
+        .file-item:hover {
+            transform: translateX(5px);
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .file-icon {
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+
+        .file-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .file-name {
+            font-weight: 600;
+        }
+
+        .file-meta {
+            font-size: 0.8rem;
+            color: #718096;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--secondary);
+            font-size: 1rem;
+            transition: color 0.3s;
+            padding: 0.25rem;
+            border-radius: 4px;
+        }
+
+        .action-btn:hover {
+            color: var(--accent);
+            background-color: #f7fafc;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background-color: #e2e8f0;
+            border-radius: 3px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--accent);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .upload-status {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: #718096;
+        }
+
+        .assessment-results {
+            margin-top: 2rem;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .score-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .score-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .score-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .criterion {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .criterion:last-child {
+            border-bottom: none;
+        }
+
+        .criterion-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .criterion-score {
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .evidence {
+            background-color: var(--light);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin: 0.5rem 0;
+            font-style: italic;
+        }
+
+        .feedback {
+            margin-top: 0.5rem;
+        }
+
+        .feedback-positive {
+            color: var(--success);
+        }
+
+        .feedback-improve {
+            color: var(--warning);
+        }
+
+        .feedback-action {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            border-bottom-color: var(--accent);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        footer {
+            background-color: var(--secondary);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            color: #cbd5e0;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid #4a5568;
+            color: #a0aec0;
+            font-size: 0.9rem;
+        }
+
+        .upload-options {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .workflow {
+                grid-template-columns: 1fr;
+            }
+
+            .workflow-step::after {
+                display: none;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+
+            .upload-options {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <div>
+                    <h1>Academic Literacy Assessor</h1>
+                    <span>AI-Powered Assessment Tool for Educators</span>
+                </div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active">Dashboard</a></li>
+                    <li><a href="#">Rubrics</a></li>
+                    <li><a href="#">Assignments</a></li>
+                    <li><a href="#">Results</a></li>
+                    <li><a href="#">Settings</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="dashboard">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Recent Assessments</h2>
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-value" id="completed-count">0</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="inprogress-count">0</div>
+                        <div class="stat-label">In Progress</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">92%</div>
+                        <div class="stat-label">Agreement</div>
+                    </div>
+                </div>
+                <p>Last assessment completed: <span id="last-assessment">None yet</span></p>
+                <a href="#" class="btn" style="margin-top: 1rem;">View All Results</a>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Quick Actions</h2>
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <button class="btn" id="upload-rubric-btn">Upload New Rubric</button>
+                    <button class="btn btn-outline" id="batch-upload-btn">Batch Upload Assignments</button>
+                    <button class="btn btn-success" id="start-assessment-btn">Start Assessment Run</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="workflow">
+            <div class="workflow-step">
+                <div class="step-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h3>Upload Rubric</h3>
+                <p>PDF, DOCX, CSV or JSON format</p>
+            </div>
+            <div class="workflow-step">
+                <div class="step-icon">
+                    <i class="fas fa-upload"></i>
+                </div>
+                <h3>Upload Assignments</h3>
+                <p>Single or batch upload</p>
+            </div>
+            <div class="workflow-step">
+                <div class="step-icon">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <h3>AI Assessment</h3>
+                <p>Criterion-by-criterion analysis</p>
+            </div>
+            <div class="workflow-step">
+                <div class="step-icon">
+                    <i class="fas fa-download"></i>
+                </div>
+                <h3>Review & Export</h3>
+                <p>PDF reports, CSV for LMS</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Upload Assignment Submissions</h2>
+                <i class="fas fa-file-upload"></i>
+            </div>
+            
+            <div class="upload-area" id="upload-area">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <h3>Drag & Drop Files Here</h3>
+                <p>Supported formats: DOCX, PDF, TXT</p>
+                <p>Maximum file size: 10MB per file</p>
+                <div class="upload-options">
+                    <button class="btn" id="browse-files-btn">Browse Files</button>
+                    <button class="btn btn-outline" id="add-folder-btn">Add Folder</button>
+                </div>
+                <input type="file" id="file-input" multiple accept=".pdf,.docx,.doc,.txt">
+            </div>
+            
+            <div class="file-list" id="file-list">
+                <!-- Files will be added here dynamically -->
+            </div>
+            
+            <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end;">
+                <button class="btn btn-success" id="process-files-btn" disabled>
+                    <i class="fas fa-cogs"></i> Process Uploaded Files
+                </button>
+            </div>
+        </div>
+
+        <div class="assessment-results">
+            <div class="result-header">
+                <h2>Assessment Results</h2>
+                <div>
+                    <button class="btn btn-outline"><i class="fas fa-sync-alt"></i> Regenerate</button>
+                    <button class="btn"><i class="fas fa-download"></i> Export All</button>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" data-tab="student1">Student A</div>
+                <div class="tab" data-tab="student2">Student B</div>
+                <div class="tab" data-tab="cohort">Cohort Overview</div>
+            </div>
+
+            <div class="tab-content active" id="student1">
+                <!-- Assessment content remains the same -->
+                <div class="score-card">
+                    <div class="score-header">
+                        <h3>Overall Score</h3>
+                        <div class="score-value">78%</div>
+                    </div>
+                    <p>Research Essay - Academic Literacy 101</p>
+                </div>
+
+                <div class="score-card">
+                    <h3 style="margin-bottom: 1rem;">Criterion Assessment</h3>
+                    
+                    <div class="criterion">
+                        <div class="criterion-header">
+                            <h4>Structure and Organisation</h4>
+                            <div class="criterion-score">15.6/20</div>
+                        </div>
+                        <p><strong>Level:</strong> Proficient</p>
+                        <div class="evidence">
+                            "The introduction clearly frames the research question and provides adequate context for the reader. The body paragraphs follow a logical sequence with effective transitions."
+                        </div>
+                        <div class="feedback">
+                            <p class="feedback-positive"><strong>What worked:</strong> Your introduction effectively sets up the argument and provides a clear roadmap.</p>
+                            <p class="feedback-improve"><strong>Areas for improvement:</strong> Some paragraphs could be more tightly focused on a single main idea.</p>
+                            <p class="feedback-action"><strong>Next step:</strong> Practice paragraph unity by ensuring each paragraph has a clear topic sentence.</p>
+                        </div>
+                    </div>
+
+                    <div class="criterion">
+                        <div class="criterion-header">
+                            <h4>Argumentation and Critical Thinking</h4>
+                            <div class="criterion-score">18.9/25</div>
+                        </div>
+                        <p><strong>Level:</strong> Competent</p>
+                        <div class="evidence">
+                            "The thesis is clearly stated but could be more nuanced. Evidence is presented but not always critically evaluated."
+                        </div>
+                        <div class="feedback">
+                            <p class="feedback-positive"><strong>What worked:</strong> You've identified relevant sources to support your claims.</p>
+                            <p class="feedback-improve"><strong>Areas for improvement:</strong> Some claims lack sufficient evidence or critical analysis.</p>
+                            <p class="feedback-action"><strong>Next step:</strong> Practice evaluating the strength of your evidence and considering counterarguments.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button class="btn btn-success"><i class="fas fa-check"></i> Approve Assessment</button>
+                    <button class="btn btn-outline"><i class="fas fa-edit"></i> Edit Scores</button>
+                    <button class="btn"><i class="fas fa-file-pdf"></i> Generate PDF Report</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Academic Literacy Assessor</h3>
+                <p>An AI-powered tool to support academic literacy assessment with consistency, transparency, and pedagogical value.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="#">User Guide</a></li>
+                    <li><a href="#">Rubric Templates</a></li>
+                    <li><a href="#">Research & Methodology</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact & Support</h3>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Contact Administrators</a></li>
+                    <li><a href="#">Feature Requests</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2023 Academic Literacy Assessor. All rights reserved. | Human oversight is mandatory. The agent is advisory only.
+        </div>
+    </footer>
+
+    <script>
+        // File upload functionality
+        const fileInput = document.getElementById('file-input');
+        const browseFilesBtn = document.getElementById('browse-files-btn');
+        const uploadArea = document.getElementById('upload-area');
+        const fileList = document.getElementById('file-list');
+        const processFilesBtn = document.getElementById('process-files-btn');
+        const completedCount = document.getElementById('completed-count');
+        const inProgressCount = document.getElementById('inprogress-count');
+        const lastAssessment = document.getElementById('last-assessment');
+        
+        let uploadedFiles = [];
+
+        // Trigger file input when browse button is clicked
+        browseFilesBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // Handle file selection
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        // Process the selected files
+        function handleFiles(files) {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                
+                // Validate file type
+                const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
+                                   'application/msword', 'text/plain'];
+                if (!validTypes.includes(file.type)) {
+                    alert(`File "${file.name}" is not a supported format. Please upload PDF, DOCX, or TXT files.`);
+                    continue;
+                }
+                
+                // Validate file size (10MB max)
+                if (file.size > 10 * 1024 * 1024) {
+                    alert(`File "${file.name}" is too large. Maximum file size is 10MB.`);
+                    continue;
+                }
+                
+                // Add to uploaded files list
+                if (!uploadedFiles.some(f => f.name === file.name && f.size === file.size)) {
+                    uploadedFiles.push(file);
+                    addFileToList(file);
+                }
+            }
+            
+            // Enable process button if we have files
+            processFilesBtn.disabled = uploadedFiles.length === 0;
+            
+            // Update file input to clear selection
+            fileInput.value = '';
+        }
+
+        // Add file to the UI list
+        function addFileToList(file) {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.dataset.fileId = Date.now() + Math.random();
+            
+            const fileSize = formatFileSize(file.size);
+            const fileType = getFileType(file);
+            
+            fileItem.innerHTML = `
+                <div class="file-info">
+                    <i class="fas ${getFileIcon(file)} file-icon"></i>
+                    <div class="file-details">
+                        <div class="file-name">${file.name}</div>
+                        <div class="file-meta">
+                            <span>${fileSize}</span>
+                            <span>${fileType}</span>
+                            <span>Uploaded: ${new Date().toLocaleString()}</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 0%"></div>
+                        </div>
+                        <div class="upload-status">
+                            <span>Status: <span class="status-text">Pending</span></span>
+                            <span class="progress-text">0%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="file-actions">
+                    <button class="action-btn view-btn" title="View file"><i class="fas fa-eye"></i></button>
+                    <button class="action-btn remove-btn" title="Remove file"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
+            
+            fileList.appendChild(fileItem);
+            
+            // Simulate upload progress
+            simulateUploadProgress(fileItem);
+            
+            // Add event listeners for buttons
+            const removeBtn = fileItem.querySelector('.remove-btn');
+            removeBtn.addEventListener('click', () => {
+                const fileName = file.name;
+                uploadedFiles = uploadedFiles.filter(f => f !== file);
+                fileItem.remove();
+                processFilesBtn.disabled = uploadedFiles.length === 0;
+                showNotification(`File "${fileName}" removed`, 'info');
+            });
+            
+            const viewBtn = fileItem.querySelector('.view-btn');
+            viewBtn.addEventListener('click', () => {
+                // In a real app, this would open a preview
+                showNotification(`Preview for "${file.name}" would open here`, 'info');
+            });
+        }
+
+        // Simulate upload progress
+        function simulateUploadProgress(fileItem) {
+            const progressBar = fileItem.querySelector('.progress');
+            const progressText = fileItem.querySelector('.progress-text');
+            const statusText = fileItem.querySelector('.status-text');
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 10;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    statusText.textContent = 'Uploaded';
+                    statusText.style.color = 'var(--success)';
+                    showNotification(`File uploaded successfully`, 'success');
+                } else {
+                    statusText.textContent = 'Uploading...';
+                }
+                
+                progressBar.style.width = `${progress}%`;
+                progressText.textContent = `${Math.round(progress)}%`;
+            }, 200);
+        }
+
+        // Process files button
+        processFilesBtn.addEventListener('click', () => {
+            if (uploadedFiles.length === 0) return;
+            
+            showNotification(`Processing ${uploadedFiles.length} file(s)...`, 'info');
+            
+            // Simulate processing delay
+            setTimeout(() => {
+                // Update dashboard stats
+                const currentCompleted = parseInt(completedCount.textContent);
+                const currentInProgress = parseInt(inProgressCount.textContent);
+                
+                completedCount.textContent = currentCompleted + uploadedFiles.length;
+                inProgressCount.textContent = Math.max(0, currentInProgress - uploadedFiles.length);
+                lastAssessment.textContent = `${uploadedFiles.length} files - ${new Date().toLocaleDateString()}`;
+                
+                // Clear uploaded files
+                uploadedFiles = [];
+                fileList.innerHTML = '';
+                processFilesBtn.disabled = true;
+                
+                showNotification(`Successfully processed ${uploadedFiles.length} file(s)`, 'success');
+            }, 2000);
+        });
+
+        // Helper functions
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function getFileType(file) {
+            if (file.type === 'application/pdf') return 'PDF Document';
+            if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') return 'Word Document';
+            if (file.type === 'application/msword') return 'Word Document';
+            if (file.type === 'text/plain') return 'Text File';
+            return 'Unknown';
+        }
+
+        function getFileIcon(file) {
+            if (file.type === 'application/pdf') return 'fa-file-pdf';
+            if (file.type.includes('word')) return 'fa-file-word';
+            if (file.type === 'text/plain') return 'fa-file-alt';
+            return 'fa-file';
+        }
+
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: var(--border-radius);
+                color: white;
+                font-weight: 600;
+                z-index: 1000;
+                box-shadow: var(--shadow);
+                transition: transform 0.3s, opacity 0.3s;
+                transform: translateX(100%);
+                opacity: 0;
+            `;
+            
+            if (type === 'success') {
+                notification.style.backgroundColor = 'var(--success)';
+            } else if (type === 'error') {
+                notification.style.backgroundColor = 'var(--danger)';
+            } else {
+                notification.style.backgroundColor = 'var(--accent)';
+            }
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+                notification.style.opacity = '1';
+            }, 10);
+            
+            // Animate out after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Tab functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Other button functionality
+        document.getElementById('upload-rubric-btn').addEventListener('click', () => {
+            showNotification('Rubric upload dialog would open here', 'info');
+        });
+
+        document.getElementById('batch-upload-btn').addEventListener('click', () => {
+            showNotification('Batch upload dialog would open here', 'info');
+        });
+
+        document.getElementById('start-assessment-btn').addEventListener('click', () => {
+            if (uploadedFiles.length === 0) {
+                showNotification('Please upload files before starting assessment', 'error');
+                return;
+            }
+            showNotification('Starting assessment process...', 'info');
+        });
+
+        document.getElementById('add-folder-btn').addEventListener('click', () => {
+            showNotification('Folder upload would be enabled in a desktop application', 'info');
+        });
+    </script>
+</body>
+</html>
